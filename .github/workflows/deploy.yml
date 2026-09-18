@@ -21,7 +21,7 @@ jobs:
       - name: Build Web
         run: |
           cd flutter/flutter_application_1
-          flutter build web --base-href "/MobileDev/"
+          flutter build web --base-href "/MobileDevelop/"
           
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
