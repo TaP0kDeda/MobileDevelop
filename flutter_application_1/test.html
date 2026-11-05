@@ -94,7 +94,6 @@
 
         // Вход через OAuth провайдеры
         async function signInWith(provider) {
-            const statusEl = document.getElementById('status');
             const { data, error } = await client.auth.signInWithOAuth({
                 provider: provider, // 'google', 'github' или 'discord'
                 options: {
@@ -105,12 +104,6 @@
 
             if (error) {
                 alert('Ошибка OAuth: ' + error.message);
-                statusEl.innerText = 'Ошибка входа: ' + error.message;
-                statusEl.style.color = 'red';
-            }
-            else {
-                statusEl.innerText = 'Вы вошли как: ' + username;
-                statusEl.style.color = 'green';
             }
         }
     </script>
