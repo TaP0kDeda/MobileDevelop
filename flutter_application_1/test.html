@@ -3,33 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Тест Авторизации Supabase</title>
-    <!-- Подключаем библиотеку Supabase -->
+    <title>Mobile develop login test итд</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         body { font-family: Arial, sans-serif; max-width: 400px; margin: 50px auto; padding: 20px; }
         input { width: 100%; padding: 10px; margin: 10px 0; box-sizing: border-box; }
         button { width: 100%; padding: 10px; margin: 5px 0; cursor: pointer; border: none; border-radius: 5px; font-weight: bold; }
-        .btn-primary { background-color: #3ecf8e; color: white; }
-        .btn-secondary { background-color: #333; color: white; }
-        .btn-oauth { background-color: #f0f0f0; color: #333; border: 1px solid #ccc; }
+        .btn-primary { background-color: #611b8f; color: white; }
+        .btn-secondary { background-color: #f0f0f0; color: white; }
+        .btn-oauth { background-color: #171518; color: #333; border: 1px solid #ccc; }
         .divider { text-align: center; margin: 20px 0; color: #888; }
+        .btn-primary:hover { background-color: #410f63; color: white; }
+        .btn-oauth { background-color: #0d0c0e; color: #333; border: 1px solid #ccc; }
+        .btn-secondary { background-color: #ebebeb; color: white; }
     </style>
 </head>
 <body>
-
-    <h2>Вход в приложение</h2>
-    
-    <!-- Форма логина и пароля -->
+    <h2>Тест входа итд</h2>
     <input type="text" id="username" placeholder="Введите юзернейм" required>
     <input type="password" id="password" placeholder="Введите пароль" required>
-    
-    <button class="btn-primary" onclick="signUp()">Зарегистрироваться (Sign Up)</button>
-    <button class="btn-secondary" onclick="signIn()">Войти (Sign In)</button>
 
-    <div class="divider">— ИЛИ —</div>
+    <button class="btn-primary" onclick="signUp()">Зарегистрироваться</button>
+    <button class="btn-secondary" onclick="signIn()">Войти</button>
 
-    <!-- Кнопки OAuth -->
+    <div class="divider">--- Другие способы входа ---</div>
+
     <button class="btn-oauth" onclick="signInWith('google')">Войти через Google</button>
     <button class="btn-oauth" onclick="signInWith('github')">Войти через GitHub</button>
     <button class="btn-oauth" onclick="signInWith('discord')">Войти через Discord</button>
@@ -37,18 +35,12 @@
     <p id="status" style="margin-top: 20px; font-weight: bold; text-align: center;"></p>
 
     <script>
-        // --- 1. НАСТРОЙКИ ---
         const supabaseUrl = 'https://uyzxabzgnpwejkeezhml.supabase.co';
         const supabaseKey = 'sb_publishable_ZeEf7M92yrpDRRywwUeWaw_kzJVAdkc';
         
         const client = window.supabase.createClient(supabaseUrl, supabaseKey);
-
-        // Суффикс, чтобы превращать юзернейм в email для Supabase
         const DOMAIN_SUFFIX = '@example.com';
 
-        // --- 2. ФУНКЦИИ АВТОРИЗАЦИИ ---
-
-        // Регистрация по логину/паролю
         async function signUp() {
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
@@ -102,6 +94,7 @@
 
         // Вход через OAuth провайдеры
         async function signInWith(provider) {
+            const statusEl = document.getElementById('status');
             const { data, error } = await client.auth.signInWithOAuth({
                 provider: provider, // 'google', 'github' или 'discord'
                 options: {
@@ -112,6 +105,12 @@
 
             if (error) {
                 alert('Ошибка OAuth: ' + error.message);
+                statusEl.innerText = 'Ошибка входа: ' + error.message;
+                statusEl.style.color = 'red';
+            }
+            else {
+                statusEl.innerText = 'Вы вошли как: ' + username;
+                statusEl.style.color = 'green';
             }
         }
     </script>
