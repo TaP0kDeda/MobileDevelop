@@ -24,15 +24,15 @@
 
     <button class="btn-logout" onclick="logout()">Выйти из аккаунта</button>
 
-    <script>
+        <script>
         const supabaseUrl = 'https://<ВАШ_PROJECT_REF>.supabase.co';
         const supabaseKey = '<ВАШ_ANON_KEY>';
         const client = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-        // Функция для обновления интерфейса
+        // Эта функция отвечает за вывод данных и редирект
         function updateUI(session) {
             if (!session) {
-                // Если сессии нет — выкидываем на вход
+                // Если пользователь не авторизован, выкидываем на логин
                 window.location.href = 'test.html';
                 return;
             }
@@ -40,34 +40,32 @@
             const user = session.user;
             let displayName = 'Пользователь';
 
-            // 1. Пытаемся взять имя из OAuth (Google, GitHub, Discord)
+            // Достаем имя из OAuth провайдеров
             if (user.user_metadata) {
-                // Google и Discord часто пишут в full_name, GitHub — в user_name или name
                 displayName = user.user_metadata.full_name 
                            || user.user_metadata.name 
                            || user.user_metadata.user_name;
             }
 
-            // 2. Если имени нет (вход по паролю), берем часть email до @
+            // Если имени нет (вход по логину), берем email до @
             if (!displayName && user.email) {
                 displayName = user.email.split('@')[0];
             }
 
-            // Обновляем текст на странице
+            // Убираем "Загрузку..." и пишем имя
             document.getElementById('user-display').innerText = displayName;
         }
 
-        // 1. Сначала проверяем текущую сессию (мгновенно)
+        // 1. Проверяем сессию мгновенно при загрузке
         client.auth.getSession().then(({ data: { session } }) => {
             updateUI(session);
         });
 
-        // 2. Слушаем изменения авторизации (сработает, когда OAuth вернет токен)
+        // 2. Слушаем изменения (важно для OAuth, когда токен приходит в URL)
         client.auth.onAuthStateChange((_event, session) => {
             updateUI(session);
         });
 
-        // 3. Функция выхода
         async function logout() {
             await client.auth.signOut();
             window.location.href = 'test.html';

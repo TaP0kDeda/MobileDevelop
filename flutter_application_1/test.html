@@ -92,10 +92,13 @@
 
         // Вход через OAuth провайдеры
         async function signInWith(provider) {
+            const currentUrl = window.location.href;
+            const redirectUrl = currentUrl.replace('test.html', 'profile.html');
+
             const { data, error } = await client.auth.signInWithOAuth({
                 provider: provider,
                 options: {
-                    redirectTo: window.location.origin + '/profile.html' 
+                    redirectTo: redirectUrl
                 }
             });
             if (error) alert('Ошибка OAuth: ' + error.message);
