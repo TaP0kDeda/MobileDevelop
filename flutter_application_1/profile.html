@@ -29,36 +29,47 @@
         const supabaseKey = '<ВАШ_ANON_KEY>';
         const client = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-        // 1. Проверяем, залогинен ли пользователь при загрузке страницы
-        async function checkUser() {
-            const { data: { user }, error } = await client.auth.getUser();
-
-            if (error || !user) {
-                // Если не залогинен — выкидываем на страницу входа
+        // Функция для обновления интерфейса
+        function updateUI(session) {
+            if (!session) {
+                // Если сессии нет — выкидываем на вход
                 window.location.href = 'test.html';
-            } else {
-                // Если залогинен — показываем имя
-                // Если вход был через обычный юзернейм (мы делали @example.com)
-                let displayName = user.email.split('@')[0]; 
-                
-                // Если вход был через Google/GitHub/Discord, у них есть полное имя
-                if (user.user_metadata && user.user_metadata.full_name) {
-                    displayName = user.user_metadata.full_name;
-                } else if (user.user_metadata && user.user_metadata.name) {
-                    displayName = user.user_metadata.name;
-                }
-
-                document.getElementById('user-display').innerText = displayName;
+                return;
             }
+
+            const user = session.user;
+            let displayName = 'Пользователь';
+
+            // 1. Пытаемся взять имя из OAuth (Google, GitHub, Discord)
+            if (user.user_metadata) {
+                // Google и Discord часто пишут в full_name, GitHub — в user_name или name
+                displayName = user.user_metadata.full_name 
+                           || user.user_metadata.name 
+                           || user.user_metadata.user_name;
+            }
+
+            // 2. Если имени нет (вход по паролю), берем часть email до @
+            if (!displayName && user.email) {
+                displayName = user.email.split('@')[0];
+            }
+
+            // Обновляем текст на странице
+            document.getElementById('user-display').innerText = displayName;
         }
 
-        // Запускаем проверку при открытии страницы
-        checkUser();
+        // 1. Сначала проверяем текущую сессию (мгновенно)
+        client.auth.getSession().then(({ data: { session } }) => {
+            updateUI(session);
+        });
 
-        // 2. Функция выхода
+        // 2. Слушаем изменения авторизации (сработает, когда OAuth вернет токен)
+        client.auth.onAuthStateChange((_event, session) => {
+            updateUI(session);
+        });
+
+        // 3. Функция выхода
         async function logout() {
             await client.auth.signOut();
-            // После выхода перенаправляем на страницу логина
             window.location.href = 'test.html';
         }
     </script>
