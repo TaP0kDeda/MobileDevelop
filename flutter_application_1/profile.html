@@ -15,10 +15,10 @@
 </head>
 <body>
 
-    <h2>Личный кабинет</h2>
+    <h2>Личный кабинет ого</h2>
     
     <div class="card">
-        <p>Вы вошли как:</p>
+        <p>Вам юзер:</p>
         <h3 id="user-display" style="color: #3ecf8e;">Загрузка...</h3>
     </div>
 
@@ -29,10 +29,8 @@
         const supabaseKey = 'sb_publishable_ZeEf7M92yrpDRRywwUeWaw_kzJVAdkc';
         const client = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-        // Эта функция отвечает за вывод данных и редирект
         function updateUI(session) {
             if (!session) {
-                // Если пользователь не авторизован, выкидываем на логин
                 window.location.href = 'test.html';
                 return;
             }
@@ -40,28 +38,23 @@
             const user = session.user;
             let displayName = 'Пользователь';
 
-            // Достаем имя из OAuth провайдеров
             if (user.user_metadata) {
                 displayName = user.user_metadata.full_name 
                            || user.user_metadata.name 
                            || user.user_metadata.user_name;
             }
 
-            // Если имени нет (вход по логину), берем email до @
             if (!displayName && user.email) {
                 displayName = user.email.split('@')[0];
             }
 
-            // Убираем "Загрузку..." и пишем имя
             document.getElementById('user-display').innerText = displayName;
         }
 
-        // 1. Проверяем сессию мгновенно при загрузке
         client.auth.getSession().then(({ data: { session } }) => {
             updateUI(session);
         });
 
-        // 2. Слушаем изменения (важно для OAuth, когда токен приходит в URL)
         client.auth.onAuthStateChange((_event, session) => {
             updateUI(session);
         });
