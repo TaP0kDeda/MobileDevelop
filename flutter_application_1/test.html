@@ -52,7 +52,6 @@
                 return;
             }
 
-            // Превращаем username в email формат
             const email = username + DOMAIN_SUFFIX;
 
             const { data, error } = await client.auth.signUp({
@@ -64,12 +63,12 @@
                 statusEl.innerText = 'Ошибка регистрации: ' + error.message;
                 statusEl.style.color = 'red';
             } else {
-                statusEl.innerText = 'Успешно зарегистрирован! Теперь нажмите "Войти".';
+                statusEl.innerText = 'Успешно зарегистрирован!';
                 statusEl.style.color = 'green';
+                window.location.href = 'profile.html';
             }
         }
 
-        // Вход по логину/паролю
         async function signIn() {
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
@@ -86,8 +85,7 @@
                 statusEl.innerText = 'Ошибка входа: ' + error.message;
                 statusEl.style.color = 'red';
             } else {
-                statusEl.innerText = 'Вы вошли как: ' + username;
-                statusEl.style.color = 'green';
+                window.location.href = 'profile.html';
                 console.log('Сессия:', data.session);
             }
         }
@@ -95,16 +93,12 @@
         // Вход через OAuth провайдеры
         async function signInWith(provider) {
             const { data, error } = await client.auth.signInWithOAuth({
-                provider: provider, // 'google', 'github' или 'discord'
+                provider: provider,
                 options: {
-                    // Сюда пользователь вернется после входа
-                    redirectTo: window.location.origin + window.location.pathname 
+                    redirectTo: window.location.origin + '/profile.html' 
                 }
             });
-
-            if (error) {
-                alert('Ошибка OAuth: ' + error.message);
-            }
+            if (error) alert('Ошибка OAuth: ' + error.message);
         }
     </script>
 </body>
