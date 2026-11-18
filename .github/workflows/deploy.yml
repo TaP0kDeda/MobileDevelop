@@ -9,31 +9,6 @@ permissions:
   pages: write
   id-token: write
 jobs:
-  build-web:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          channel: 'stable'
-
-      - name: Install dependencies
-        working-directory: ./flutter_application_1
-        run: flutter pub get
-
-      - name: Build web
-        working-directory: ./flutter_application_1
-        run: flutter build web --release --base-href /MobileDevelop/
-
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./flutter_application_1/build/web
   build-apk:
     runs-on: ubuntu-latest
     steps:
