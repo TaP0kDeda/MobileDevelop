@@ -52,7 +52,7 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           # Указываем папку, где лежат ваши test.html и profile.html
-          path: './flutter_application_1/test.html'
+          path: './flutter_application_1'
 
       - name: Deploy to GitHub Pages
         id: deployment
